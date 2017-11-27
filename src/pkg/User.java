@@ -2,83 +2,76 @@ package pkg;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Objects;
 
-class User implements Serializable{
+public class User implements Serializable{
     private String name;
     private String password;
     private String email;
-    private Course[] courses;
+    private ArrayList<Course> courses;
     private HashSet<Document> uploadedDocs;
     private HashSet<Document> viewedDocs;
     private Boolean admin;
 
-    //constructor
-    //make sure to initialize all instance variables
-    private User(String name, String password, String email, Boolean admin) {
-    /**
+    public User(String name, String password, String email, Boolean admin) {
+        this.name = name;
+        this.password = password;
+        this.email = email;
+        this.admin = admin;
+        //adds admin to Main class' admins/users hashmap
+        //Key for each map is unique hashcode
+        if (this.admin == true) {
+            Main.admins.put(this.hashCode(), this);
+        }
+        else {
+            Main.users.put(this.hashCode(), this);
+        }
+        this.courses = new ArrayList<Course>();
 
-    Wendi's code here
-
-    */
     }
+
+
+    @Override
+    public int hashCode(){
+        return name.hashCode() * password.hashCode() * email.hashCode();
+    }
+
+    @Override
+    public boolean equals(User o) {
+        return o.hashCode() == this.hashCode();
 
     public String getName(){
         return name;
     }
 
-    //return admin
-    public Boolean isAdmin() {
-    /**
-
-    Wendi's code here
-
-    */
+    public String getEmail() {
+        return email;
     }
 
-    //I am unsure of how java servlets work
-    //check notes repo spec on slack for details
-    private void post() {
-    /**
+    //return admin
+    public boolean isAdmin() {
+        return this.admin;
+    }
 
-    Wendi's code here
+    //creates new Course object
+    public void newCourse(String name) {
+        if (Main.courses.keys().contains(name)) {
+            throw new IllegalArgumentException("The page for this course already exists.");
+        }
+        Course created = new Course(name, this);
+        this.courses.add(created);
 
-    */
     }
 
     //calls the course’s uploadDocument function
-    private void upLoadDocument(String docName, String docBody, Course course) {
-    /**
+    //Ideally, there would be a scroll bar for the user to choose a course that already exists (access list of all courses in Main class)
+    public void upLoadDocument(String docName, Document doc, Course course) {
+        return course.uploadDocument(this, docName, doc);
 
-    Wendi's code here
-
-    */
     }
 
-    //unsure of what to do with this yet
-    private UserPage get() {
-        return new UserPage(name, courses, (Document[]) uploadedDocs.toArray(), (Document[]) viewedDocs.toArray());
-    }
 
-    //unsure of what to do with this yet
-    private void view(Document document) {
-        viewedDocs.add(document);
-        document.incrementViews();
-        //other stuff I'm unsure of
-    }
 
-    private void addRepo(String name, String description) {
-        //unsure of what to do yet, have to wait for database
-    }
-
-    private void reportCourse(Course course) {
-        //unsure yet
-    }
-
-    private void reportDocument(Document document) {
-        //unsure yet
-    }
-
-    void receiveMessage(String msg) {
-        //unsure yet
-    }
+ 
 }
